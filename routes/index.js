@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const flash = require("express-flash");
 const hbs = require("hbs");
+const { Console } = require("console");
 const app = express();
 
 router.use(express.json());
@@ -136,27 +137,31 @@ router.post("/them", function (req, res, next) {
     hinh_sp = req.body.hinh_sp,
     gia_sp = req.body.gia_sp,
     ten_sp = req.body.ten_sp;
-  pool.query(
-    "INSERT INTO product_banchay (id_sp,hinh_sp,ten_sp,gia_sp) VALUES ($1,$2,$3,$4)",
-    [id_sp, hinh_sp, ten_sp, gia_sp],
-    (error, respone) => {
-      if (error) {
-        console.log(error);
-      } else {
-        res.send(
-          "Nhan duoc du lieu " +
-            id_sp +
-            "-" +
-            hinh_sp +
-            "-" +
-            ten_sp +
-            "-" +
-            gia_sp
-        );
+  if (!id_sp || !hinh_sp || !gia_sp || !ten_sp) {
+    res.send("Bạn cần nhập đủ dữ liệu");
+  } else {
+    pool.query(
+      "INSERT INTO product_banchay (id_sp,hinh_sp,ten_sp,gia_sp) VALUES ($1,$2,$3,$4)",
+      [id_sp, hinh_sp, ten_sp, gia_sp],
+      (error, respone) => {
+        if (error) {
+          console.log(error);
+        } else {
+          res.send(
+            "Nhan duoc du lieu " +
+              id_sp +
+              "-" +
+              hinh_sp +
+              "-" +
+              ten_sp +
+              "-" +
+              gia_sp
+          );
+        }
+        // pool.end();
       }
-      // pool.end();
-    }
-  );
+    );
+  }
   // console.log(hinh);
   // console.log(ten);
   // console.log(gia);
@@ -202,4 +207,5 @@ router.post("/them2", function (req, res, next) {
   // console.log(id);
   // res.render("them", { title: "Them du lieu vao postgre" });
 });
+
 module.exports = router;
